@@ -4,12 +4,59 @@ var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_we
 // Perform a GET request to the query URL/
 d3.json(queryUrl).then(function (data) {
   // Once we get a response, send the data.features object to the createFeatures function.
-  createFeatures(data.features);
-});
+  createFeatures (data.features)
+    // return {
+    //   opacity: 1, 
+    //   fillOpacity: 0.7, 
+    //   fillColor: getColor, 
+    //   color: "#000000",
+    //   radius: getRadius,
+    //   stroke: true, 
+    //   weight: 0.5
+    // }
+  
 
-// function markerSize(earthquakes) {
-//     return Math.sqrt(earthquakes) * 50;
-// }
+  function getColor(magnitude){
+    if (magnitude > 5) {
+      return "#f52525"
+    } else if (magnitude > 4) {
+      return "#f59725"
+    } else if (magnitude > 3){
+      return "#f5f225"
+    } else if (magnitude > 2){
+      return "#b7f525"
+    } else if (magnitude > 1) {
+      return '#6ef525'
+    } else {
+      return "36f525"
+    } 
+  };
+
+  function getRadius(magnitude){
+    switch (true){
+      case (magnitude >= 5):
+          return 25;
+          break;
+      case (magnitude >= 4):
+          return 13;
+          break;
+      case (magnitude >= 3):
+          return 11;
+          break;
+      case (magnitude >= 2):
+          return 7;
+          break;
+      case (magnitude >= 1):
+          return 5;
+          break;
+      default:
+          return 1;
+          break;
+    }
+  };
+
+
+});
 
 function createFeatures(earthquakeData) {
 
@@ -23,7 +70,10 @@ function createFeatures(earthquakeData) {
   // Create a GeoJSON layer that contains the features array on the earthquakeData object.
   // Run the onEachFeature function once for each piece of data in the array.
   var earthquakes = L.geoJSON(earthquakeData, {
-    onEachFeature: onEachFeature
+    onEachFeature: onEachFeature,
+    pointToLayer: function(feature, latlng) {
+      return L.circleMarker(latlng);
+    }
   });
 
   // Send our earthquakes layer to the createMap function/
